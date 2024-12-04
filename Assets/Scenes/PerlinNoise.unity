@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 72771485}
   - component: {fileID: 72771484}
   m_Layer: 0
-  m_Name: PerlinNoiseGenerator
+  m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -151,6 +151,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea8be0a0be2a44447af32fc1e8d077a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  width: 100
+  depth: 100
+  scale: 1
+  heightMultiplier: 50
 --- !u!4 &72771485
 Transform:
   m_ObjectHideFlags: 0
