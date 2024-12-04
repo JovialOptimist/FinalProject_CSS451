@@ -23,6 +23,7 @@ public class GenerateMountains_Perlin_Script : MonoBehaviour
             for (int x = 0; x <= width; x++)
             {
                 int index = z * (width + 1) + x;
+                // find point given x, z, scale, width, depth, heightMultiplier
                 float y = Mathf.PerlinNoise(x * scale / width, z * scale / depth) * heightMultiplier;
                 vertices[index] = new Vector3(x, y, z);
                 uv[index] = new Vector2((float)x / width, (float)z / depth);
@@ -37,6 +38,7 @@ public class GenerateMountains_Perlin_Script : MonoBehaviour
             triangles = FindTriangles()
         };
         mesh.RecalculateNormals();
+        mesh.Optimize();
 
         // Add the mesh to the gameObject
         gameObject.AddComponent<MeshFilter>().mesh = mesh;
