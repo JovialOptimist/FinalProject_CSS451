@@ -1,5 +1,7 @@
 using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class FractalSimplexNoiseMap : MonoBehaviour
 {
@@ -7,20 +9,40 @@ public class FractalSimplexNoiseMap : MonoBehaviour
     public float persistence = .5f;
     public float lacunarity = 3f; 
     public float scale = 5f;
+
+    public UnityEngine.UI.Slider OctaveSlider;
+    public UnityEngine.UI.Slider PersistenceSlider;
+    public UnityEngine.UI.Slider LacunaritySlider;
+    public UnityEngine.UI.Slider ScaleSlider;
+
+    public TextMeshProUGUI OctaveLabel;
+    public TextMeshProUGUI PersistenceLabel;
+    public TextMeshProUGUI LacunarityLabel;
+    public TextMeshProUGUI ScaleLabel;
+
     private MeshGen meshGen;
+    
 
     void Start()
     {
-        
-
         meshGen = GetComponent<MeshGen>();
+
+        // Set initial slider values
+        OctaveSlider.value = octaves;
+        PersistenceSlider.value = persistence;
+        LacunaritySlider.value = lacunarity;
+        ScaleSlider.value = scale;
+
+        OctaveSlider.onValueChanged.AddListener(OnOctaveChanged);
+        PersistenceSlider.onValueChanged.AddListener(OnPersistenceChanged);
+        LacunaritySlider.onValueChanged.AddListener(OnLacunarityChanged);
+        ScaleSlider.onValueChanged.AddListener(OnScaleChanged);
+
         GenMap();
     }
 
     public void GenMap()
     {
-
-
         FastNoiseLite noise = new FastNoiseLite();
         noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
         noise.SetFractalOctaves(octaves);
@@ -44,6 +66,40 @@ public class FractalSimplexNoiseMap : MonoBehaviour
         meshGen.GenerateMesh(noiseMap);
     }
 
-    
-    
+    void UpdateLabels()
+    {
+        OctaveLabel.text = octaves.ToString("#.##");
+        PersistenceLabel.text = persistence.ToString("#.##");
+        LacunarityLabel.text = lacunarity.ToString("#.##");
+        ScaleLabel.text = scale.ToString("#.##");
+    }
+
+    // Slider value change handlers
+    void OnOctaveChanged(float value)
+    {
+        octaves = Mathf.RoundToInt(value);
+        UpdateLabels();
+        GenMap();
+    }
+
+    void OnPersistenceChanged(float value)
+    {
+        persistence = value;
+        UpdateLabels();
+        GenMap();
+    }
+
+    void OnLacunarityChanged(float value)
+    {
+        lacunarity = value;
+        UpdateLabels();
+        GenMap();
+    }
+
+    void OnScaleChanged(float value)
+    {
+        scale = value;
+        UpdateLabels();
+        GenMap();
+    }
 }

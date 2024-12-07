@@ -8,12 +8,21 @@ public class MeshGen : MonoBehaviour
     public float colorCutoff = .5f;
     public bool UseCutoff = true;
     public Material colorMat;
+    private bool isFirstTime = true;
 
     public void GenerateMesh(float[][] noiseMap)
     {
+        if (isFirstTime)
+        {
+            gameObject.AddComponent<MeshRenderer>();
+            gameObject.AddComponent<MeshFilter>();
+            gameObject.AddComponent<MeshCollider>();
+            isFirstTime = false;
+        }
+
         // Basic stuff: positioning and color
         gameObject.transform.position = Vector3.zero;
-        gameObject.AddComponent<MeshRenderer>().material = colorMat;
+        gameObject.GetComponent<MeshRenderer>().material = colorMat;
 
         // Declare vertices and texture coordinate
         Vector3[] vertices = new Vector3[(width + 1) * (depth + 1)];
@@ -51,8 +60,8 @@ public class MeshGen : MonoBehaviour
         mesh.Optimize();
 
         // Add the mesh to the gameObject
-        gameObject.AddComponent<MeshFilter>().mesh = mesh;
-        gameObject.AddComponent<MeshCollider>().sharedMesh = mesh;
+        gameObject.GetComponent<MeshFilter>().mesh = mesh;
+        gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
     }
     private int[] FindTriangles()
     {
