@@ -1,14 +1,34 @@
 using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SimplexNoiseMap : MonoBehaviour
 {
     
     public float scale = 5f; // Perlin Scale (kinda like "sharpness")
     private MeshGen meshGen;
+    public TMP_Dropdown SceneSelector;
 
     void Start()
     {
+        // Set up dropdown
+        SceneSelector.options.Clear();
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        int myIndex = -1;
+        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        {
+            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+            string sceneName = System.IO.Path.GetFileNameWithoutExtension(scenePath);
+            if (sceneName == currentSceneName) myIndex = i;
+            SceneSelector.options.Add(new TMP_Dropdown.OptionData(sceneName));
+        }
+        SceneSelector.onValueChanged.AddListener(index =>
+        {
+            SceneManager.LoadScene(SceneSelector.options[index].text);
+        });
+        SceneSelector.SetValueWithoutNotify(myIndex);
+
         meshGen = GetComponent<MeshGen>();
         GenMap();
     }
