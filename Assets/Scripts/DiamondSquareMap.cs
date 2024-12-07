@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Random = System.Random;
 
 public class DiamondSquareMap : MonoBehaviour
@@ -10,9 +12,27 @@ public class DiamondSquareMap : MonoBehaviour
     public float roughness = 500;
     private MeshGen meshGen;
 
+    public UnityEngine.UI.Slider TerrainSizeSlider;
+    public UnityEngine.UI.Slider RoughnessSlider;
+    public UnityEngine.UI.Slider SeedSlider;
+
+    public TextMeshProUGUI TerrainSizeLabel;
+    public TextMeshProUGUI RoughnessLabel;
+    public TextMeshProUGUI SeedLabel;
+
     void Start()
     {
         meshGen = GetComponent<MeshGen>();
+
+        // Set initial slider values
+        TerrainSizeSlider.value = Mathf.Log(terrainSize, 2) + 1;
+        RoughnessSlider.value = roughness;
+        SeedSlider.value = seed;
+
+        TerrainSizeSlider.onValueChanged.AddListener(OnTerrainSizeChanged);
+        RoughnessSlider.onValueChanged.AddListener(OnRoughnessChanged);
+        SeedSlider.onValueChanged.AddListener(OnSeedChanged);
+
         GenMap();
     }
 
@@ -116,5 +136,32 @@ public class DiamondSquareMap : MonoBehaviour
             }
         }
     }
-    
+
+    void UpdateLabels()
+    {
+        TerrainSizeLabel.text = terrainSize.ToString("#");
+        RoughnessLabel.text = roughness.ToString("#.##");
+        SeedLabel.text = seed.ToString("#");
+    }
+
+    void OnTerrainSizeChanged(float value)
+    {
+        terrainSize = (int)Mathf.Pow(2, value); // Convert slider value back to power of 2
+        UpdateLabels();
+        GenMap();
+    }
+
+    void OnRoughnessChanged(float value)
+    {
+        roughness = value;
+        UpdateLabels();
+        GenMap();
+    }
+
+    void OnSeedChanged(float value)
+    {
+        seed = Mathf.RoundToInt(value);
+        UpdateLabels();
+        GenMap();
+    }
 }
