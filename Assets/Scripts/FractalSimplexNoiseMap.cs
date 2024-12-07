@@ -11,12 +11,16 @@ public class FractalSimplexNoiseMap : MonoBehaviour
 
     void Start()
     {
+        
+
         meshGen = GetComponent<MeshGen>();
         GenMap();
     }
 
     public void GenMap()
     {
+
+
         FastNoiseLite noise = new FastNoiseLite();
         noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
         noise.SetFractalOctaves(octaves);
