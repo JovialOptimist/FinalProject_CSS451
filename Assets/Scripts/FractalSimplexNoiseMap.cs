@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class FractalSimplexNoiseMap : MonoBehaviour
@@ -20,6 +21,8 @@ public class FractalSimplexNoiseMap : MonoBehaviour
     public TextMeshProUGUI LacunarityLabel;
     public TextMeshProUGUI ScaleLabel;
 
+    public TMP_Dropdown SceneSelector;
+
     private MeshGen meshGen;
     
 
@@ -37,6 +40,19 @@ public class FractalSimplexNoiseMap : MonoBehaviour
         PersistenceSlider.onValueChanged.AddListener(OnPersistenceChanged);
         LacunaritySlider.onValueChanged.AddListener(OnLacunarityChanged);
         ScaleSlider.onValueChanged.AddListener(OnScaleChanged);
+
+        // Set up dropdown
+        SceneSelector.options.Clear();
+        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        {
+            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+            string sceneName = System.IO.Path.GetFileNameWithoutExtension(scenePath);
+            SceneSelector.options.Add(new TMP_Dropdown.OptionData(sceneName));
+        }
+        SceneSelector.onValueChanged.AddListener(index =>
+        {
+            SceneManager.LoadScene(SceneSelector.options[index].text);
+        });
 
         GenMap();
     }

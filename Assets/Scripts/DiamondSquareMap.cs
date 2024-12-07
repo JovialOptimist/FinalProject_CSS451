@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using Random = System.Random;
 
@@ -20,6 +21,8 @@ public class DiamondSquareMap : MonoBehaviour
     public TextMeshProUGUI RoughnessLabel;
     public TextMeshProUGUI SeedLabel;
 
+    public TMP_Dropdown SceneSelector;
+
     void Start()
     {
         meshGen = GetComponent<MeshGen>();
@@ -32,6 +35,19 @@ public class DiamondSquareMap : MonoBehaviour
         TerrainSizeSlider.onValueChanged.AddListener(OnTerrainSizeChanged);
         RoughnessSlider.onValueChanged.AddListener(OnRoughnessChanged);
         SeedSlider.onValueChanged.AddListener(OnSeedChanged);
+
+        // Set up dropdown
+        SceneSelector.options.Clear();
+        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        {
+            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+            string sceneName = System.IO.Path.GetFileNameWithoutExtension(scenePath);
+            SceneSelector.options.Add(new TMP_Dropdown.OptionData(sceneName));
+        }
+        SceneSelector.onValueChanged.AddListener(index =>
+        {
+            SceneManager.LoadScene(SceneSelector.options[index].text);
+        });
 
         GenMap();
     }
