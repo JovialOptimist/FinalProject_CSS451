@@ -6,7 +6,6 @@ public class MeshGen : MonoBehaviour
     public int depth = 100; // Depth of the ground
     public float heightMultiplier = 5f;
     public float colorCutoff = .5f;
-    public bool UseCutoff = true;
     public Material colorMat;
     private bool isFirstTime = true;
 
@@ -39,11 +38,34 @@ public class MeshGen : MonoBehaviour
                 float y = noiseMap[x][z] * heightMultiplier;
                 vertices[index] = new Vector3(x, y, z);
                 uv[index] = new Vector2((float)x / width, (float)z / depth);
-                if (UseCutoff)
-                    colors[index] = vertices[index].y / heightMultiplier <= colorCutoff ? Color.Lerp(Color.black, Color.gray, vertices[index].y / heightMultiplier) : Color.white;
+                // Generate color gradient for mountain
+                float heightPercentage = vertices[index].y / heightMultiplier;
+
+                // Corrected colors with normalized RGB values
+                Color darkBrown = ColorHelper(64, 36, 21);
+                Color lightBrown = ColorHelper(116, 66, 38);
+                Color green = ColorHelper(16, 116, 26);
+
+                float bottom = 0.0f;
+                float cutoffOne = 0.2f;
+                float cutoffTwo = 0.7f;
+                float topCutoff = 0.9f;
+
+                if (heightPercentage < cutoffOne)
+                {
+                    colors[index] = Color.Lerp(darkBrown, lightBrown, heightPercentage / (cutoffOne - bottom));
+                }
+                else if (heightPercentage < cutoffTwo)
+                {
+                    colors[index] = Color.Lerp(lightBrown, green, (heightPercentage - cutoffOne) / (cutoffTwo - cutoffOne));
+                }
+                else if (heightPercentage < topCutoff)
+                {
+                    colors[index] = Color.Lerp(green, Color.white, (heightPercentage - cutoffTwo) / (topCutoff - cutoffTwo));
+                }
                 else
                 {
-                    colors[index] = Color.Lerp(Color.black, Color.white, vertices[index].y / heightMultiplier);
+                    colors[index] = Color.white;
                 }
             }
         }
@@ -63,6 +85,12 @@ public class MeshGen : MonoBehaviour
         gameObject.GetComponent<MeshFilter>().mesh = mesh;
         gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
     }
+
+    private UnityEngine.Color ColorHelper(int r, int g, int b)
+    {
+        return new Color(r / 255f, g / 255f, b / 255f);
+    }
+
     private int[] FindTriangles()
     {
         int[] triangles = new int[width * depth * 6];
