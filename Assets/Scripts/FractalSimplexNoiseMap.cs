@@ -6,16 +6,19 @@ using UnityEngine.UIElements;
 
 public class FractalSimplexNoiseMap : MonoBehaviour
 {
+    public int seed = 1000;
     public int octaves = 4; 
     public float persistence = .5f;
     public float lacunarity = 3f; 
     public float scale = 5f;
 
+    public UnityEngine.UI.Slider SeedSlider;
     public UnityEngine.UI.Slider OctaveSlider;
     public UnityEngine.UI.Slider PersistenceSlider;
     public UnityEngine.UI.Slider LacunaritySlider;
     public UnityEngine.UI.Slider ScaleSlider;
 
+    public TextMeshProUGUI SeedLabel;
     public TextMeshProUGUI OctaveLabel;
     public TextMeshProUGUI PersistenceLabel;
     public TextMeshProUGUI LacunarityLabel;
@@ -34,6 +37,7 @@ public class FractalSimplexNoiseMap : MonoBehaviour
         meshGen = GetComponent<MeshGen>();
 
         // Set initial slider values
+        SeedSlider.value = seed;
         OctaveSlider.value = octaves;
         PersistenceSlider.value = persistence;
         LacunaritySlider.value = lacunarity;
@@ -41,6 +45,7 @@ public class FractalSimplexNoiseMap : MonoBehaviour
 
         UpdateLabels();
 
+        SeedSlider.onValueChanged.AddListener(OnSeedChanged);
         OctaveSlider.onValueChanged.AddListener(OnOctaveChanged);
         PersistenceSlider.onValueChanged.AddListener(OnPersistenceChanged);
         LacunaritySlider.onValueChanged.AddListener(OnLacunarityChanged);
@@ -52,6 +57,7 @@ public class FractalSimplexNoiseMap : MonoBehaviour
     public void GenMap()
     {
         FastNoiseLite noise = new FastNoiseLite();
+        noise.SetSeed(seed);
         noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
         noise.SetFractalOctaves(octaves);
         noise.SetFractalGain(persistence);
@@ -76,6 +82,7 @@ public class FractalSimplexNoiseMap : MonoBehaviour
 
     void UpdateLabels()
     {
+        SeedLabel.text = seed.ToString("#");
         OctaveLabel.text = octaves.ToString("#.##");
         PersistenceLabel.text = persistence.ToString("#.##");
         LacunarityLabel.text = lacunarity.ToString("#.##");
@@ -83,6 +90,13 @@ public class FractalSimplexNoiseMap : MonoBehaviour
     }
 
     // Slider value change handlers
+    void OnSeedChanged(float value)
+    {
+        seed = Mathf.RoundToInt(value);
+        UpdateLabels();
+        GenMap();
+    }
+
     void OnOctaveChanged(float value)
     {
         octaves = Mathf.RoundToInt(value);

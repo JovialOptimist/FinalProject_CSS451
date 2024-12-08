@@ -6,9 +6,13 @@ using UnityEngine.SceneManagement;
 public class SimplexNoiseMap : MonoBehaviour
 {
     
-    public float scale = 5f; // Perlin Scale (kinda like "sharpness")
+    public float scale = 5f;
+    public int seed = 1000;
 
+    public UnityEngine.UI.Slider SeedSlider;
     public UnityEngine.UI.Slider ScaleSlider;
+
+    public TextMeshProUGUI SeedLabel;
     public TextMeshProUGUI ScaleLabel;
 
     private MeshGen meshGen;
@@ -20,8 +24,12 @@ public class SimplexNoiseMap : MonoBehaviour
         SetUpDropdown.SetUp(SceneSelector);
 
         ScaleSlider.value = scale;
+        SeedSlider.value = seed;
+
         UpdateLabels();
+
         ScaleSlider.onValueChanged.AddListener(OnScaleChanged);
+        SeedSlider.onValueChanged.AddListener(OnSeedChanged);
 
         meshGen = GetComponent<MeshGen>();
         GenMap();
@@ -30,6 +38,7 @@ public class SimplexNoiseMap : MonoBehaviour
     public void GenMap()
     {
         FastNoiseLite noise = new FastNoiseLite();
+        noise.SetSeed(seed);
         noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
         
         float[][] noiseMap = new float[meshGen.width + 1][];
@@ -51,11 +60,19 @@ public class SimplexNoiseMap : MonoBehaviour
     void UpdateLabels()
     {
         ScaleLabel.text = scale.ToString("#.##");
+        SeedLabel.text = seed.ToString("#");
     }
 
     void OnScaleChanged(float value)
     {
         scale = value;
+        UpdateLabels();
+        GenMap();
+    }
+
+    void OnSeedChanged(float value)
+    {
+        seed = Mathf.RoundToInt(value);
         UpdateLabels();
         GenMap();
     }

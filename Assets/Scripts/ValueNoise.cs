@@ -6,10 +6,15 @@ using UnityEngine.SceneManagement;
 public class ValueNoise : MonoBehaviour
 {
     public float scale = 5f;
-    public UnityEngine.UI.Slider ScaleSlider;
-    public TextMeshProUGUI ScaleLabel;
-    private MeshGen meshGen;
+    public int seed = 1000;
 
+    public UnityEngine.UI.Slider SeedSlider;
+    public UnityEngine.UI.Slider ScaleSlider;
+
+    public TextMeshProUGUI SeedLabel;
+    public TextMeshProUGUI ScaleLabel;
+
+    private MeshGen meshGen;
     public TMP_Dropdown SceneSelector;
 
     void Start()
@@ -18,8 +23,12 @@ public class ValueNoise : MonoBehaviour
         SetUpDropdown.SetUp(SceneSelector);
 
         ScaleSlider.value = scale;
+        SeedSlider.value = seed;
+
         UpdateLabels();
+
         ScaleSlider.onValueChanged.AddListener(OnScaleChanged);
+        SeedSlider.onValueChanged.AddListener(OnSeedChanged);
 
         meshGen = GetComponent<MeshGen>();
         GenMap();
@@ -28,6 +37,7 @@ public class ValueNoise : MonoBehaviour
     public void GenMap()
     {
         FastNoiseLite noise = new FastNoiseLite();
+        noise.SetSeed(seed);
         noise.SetNoiseType(FastNoiseLite.NoiseType.Value);
         
         float[][] noiseMap = new float[meshGen.width + 1][];
@@ -49,6 +59,7 @@ public class ValueNoise : MonoBehaviour
     void UpdateLabels()
     {
         ScaleLabel.text = scale.ToString("#.##");
+        SeedLabel.text = seed.ToString("#");
     }
 
     void OnScaleChanged(float value)
@@ -58,4 +69,10 @@ public class ValueNoise : MonoBehaviour
         GenMap();
     }
 
+    void OnSeedChanged(float value)
+    {
+        seed = Mathf.RoundToInt(value);
+        UpdateLabels();
+        GenMap();
+    }
 }
