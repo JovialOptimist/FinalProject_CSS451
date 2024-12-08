@@ -6,17 +6,22 @@ using UnityEngine.SceneManagement;
 public class ValueNoise : MonoBehaviour
 {
     public float scale = 5f;
+    public UnityEngine.UI.Slider ScaleSlider;
+    public TextMeshProUGUI ScaleLabel;
     private MeshGen meshGen;
 
     public TMP_Dropdown SceneSelector;
 
     void Start()
     {
-        meshGen = GetComponent<MeshGen>();
-
         // Set up dropdown
         SetUpDropdown.SetUp(SceneSelector);
 
+        ScaleSlider.value = scale;
+        UpdateLabels();
+        ScaleSlider.onValueChanged.AddListener(OnScaleChanged);
+
+        meshGen = GetComponent<MeshGen>();
         GenMap();
     }
 
@@ -41,6 +46,16 @@ public class ValueNoise : MonoBehaviour
         meshGen.GenerateMesh(noiseMap);
     }
 
-    
-    
+    void UpdateLabels()
+    {
+        ScaleLabel.text = scale.ToString("#.##");
+    }
+
+    void OnScaleChanged(float value)
+    {
+        scale = value;
+        UpdateLabels();
+        GenMap();
+    }
+
 }
