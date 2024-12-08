@@ -9,6 +9,17 @@ public class FractalNoiseMap : MonoBehaviour
     public float persistence = .5f; // How alike close points should be
     public float lacunarity = 3f; // higher => more or bigger gaps, lower => less or smaller gaps
     public float scale = 5f; // Perlin Scale (kinda like "sharpness")
+
+    public UnityEngine.UI.Slider OctaveSlider;
+    public UnityEngine.UI.Slider PersistenceSlider;
+    public UnityEngine.UI.Slider LacunaritySlider;
+    public UnityEngine.UI.Slider ScaleSlider;
+
+    public TextMeshProUGUI OctaveLabel;
+    public TextMeshProUGUI PersistenceLabel;
+    public TextMeshProUGUI LacunarityLabel;
+    public TextMeshProUGUI ScaleLabel;
+
     private MeshGen meshGen;
     public TMP_Dropdown SceneSelector;
 
@@ -16,6 +27,19 @@ public class FractalNoiseMap : MonoBehaviour
     {
         // Set up dropdown
         SetUpDropdown.SetUp(SceneSelector);
+
+        // Set initial slider values
+        OctaveSlider.value = octaves;
+        PersistenceSlider.value = persistence;
+        LacunaritySlider.value = lacunarity;
+        ScaleSlider.value = scale;
+
+        UpdateLabels();
+
+        OctaveSlider.onValueChanged.AddListener(OnOctaveChanged);
+        PersistenceSlider.onValueChanged.AddListener(OnPersistenceChanged);
+        LacunaritySlider.onValueChanged.AddListener(OnLacunarityChanged);
+        ScaleSlider.onValueChanged.AddListener(OnScaleChanged);
 
         meshGen = GetComponent<MeshGen>();
         GenMap();
@@ -60,5 +84,41 @@ public class FractalNoiseMap : MonoBehaviour
 
         return y / maxAmplitude; // Normalize the result
     }
-    
+
+    void UpdateLabels()
+    {
+        OctaveLabel.text = octaves.ToString("#.##");
+        PersistenceLabel.text = persistence.ToString("#.##");
+        LacunarityLabel.text = lacunarity.ToString("#.##");
+        ScaleLabel.text = scale.ToString("#.##");
+    }
+
+    // Slider value change handlers
+    void OnOctaveChanged(float value)
+    {
+        octaves = Mathf.RoundToInt(value);
+        UpdateLabels();
+        GenMap();
+    }
+
+    void OnPersistenceChanged(float value)
+    {
+        persistence = value;
+        UpdateLabels();
+        GenMap();
+    }
+
+    void OnLacunarityChanged(float value)
+    {
+        lacunarity = value;
+        UpdateLabels();
+        GenMap();
+    }
+
+    void OnScaleChanged(float value)
+    {
+        scale = value;
+        UpdateLabels();
+        GenMap();
+    }
 }

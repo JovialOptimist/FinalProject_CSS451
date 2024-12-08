@@ -39,6 +39,8 @@ public class FractalSimplexNoiseMap : MonoBehaviour
         LacunaritySlider.value = lacunarity;
         ScaleSlider.value = scale;
 
+        UpdateLabels();
+
         OctaveSlider.onValueChanged.AddListener(OnOctaveChanged);
         PersistenceSlider.onValueChanged.AddListener(OnPersistenceChanged);
         LacunaritySlider.onValueChanged.AddListener(OnLacunarityChanged);
