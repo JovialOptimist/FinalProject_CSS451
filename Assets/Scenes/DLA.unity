@@ -179,7 +179,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 99999
+  m_text: 50000
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -340,7 +340,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1074444017}
   m_Direction: 0
   m_MinValue: 10
-  m_MaxValue: 99999
+  m_MaxValue: 50000
   m_WholeNumbers: 1
   m_Value: 10
   m_OnValueChanged:
@@ -1875,7 +1875,6 @@ MonoBehaviour:
   depth: 100
   heightMultiplier: 5
   colorCutoff: 0.7
-  UseCutoff: 1
   colorMat: {fileID: 2100000, guid: 1e145779c1853474799c4204d3dfe6c1, type: 2}
 --- !u!114 &1412686525
 MonoBehaviour:

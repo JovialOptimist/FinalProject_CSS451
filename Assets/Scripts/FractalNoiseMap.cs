@@ -9,16 +9,19 @@ public class FractalNoiseMap : MonoBehaviour
     public float persistence = .5f; // How alike close points should be
     public float lacunarity = 3f; // higher => more or bigger gaps, lower => less or smaller gaps
     public float scale = 5f; // Perlin Scale (kinda like "sharpness")
+    public int seed = 1000;
 
     public UnityEngine.UI.Slider OctaveSlider;
     public UnityEngine.UI.Slider PersistenceSlider;
     public UnityEngine.UI.Slider LacunaritySlider;
     public UnityEngine.UI.Slider ScaleSlider;
+    public UnityEngine.UI.Slider SeedSlider;
 
     public TextMeshProUGUI OctaveLabel;
     public TextMeshProUGUI PersistenceLabel;
     public TextMeshProUGUI LacunarityLabel;
     public TextMeshProUGUI ScaleLabel;
+    public TextMeshProUGUI SeedLabel;
 
     private MeshGen meshGen;
     public TMP_Dropdown SceneSelector;
@@ -33,6 +36,7 @@ public class FractalNoiseMap : MonoBehaviour
         PersistenceSlider.value = persistence;
         LacunaritySlider.value = lacunarity;
         ScaleSlider.value = scale;
+        SeedSlider.value = seed;
 
         UpdateLabels();
 
@@ -40,6 +44,7 @@ public class FractalNoiseMap : MonoBehaviour
         PersistenceSlider.onValueChanged.AddListener(OnPersistenceChanged);
         LacunaritySlider.onValueChanged.AddListener(OnLacunarityChanged);
         ScaleSlider.onValueChanged.AddListener(OnScaleChanged);
+        SeedSlider.onValueChanged.AddListener(OnSeedChanged);
 
         meshGen = GetComponent<MeshGen>();
         GenMap();
@@ -47,6 +52,16 @@ public class FractalNoiseMap : MonoBehaviour
 
     public void GenMap()
     {
+        // Initialize the noise generator
+        FastNoiseLite noise = new FastNoiseLite();
+        noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+        noise.SetFractalType(FastNoiseLite.FractalType.FBm);
+        noise.SetFrequency(scale);
+        noise.SetFractalLacunarity(lacunarity);
+        noise.SetFractalGain(persistence);
+        noise.SetFractalOctaves(octaves);
+        noise.SetSeed(seed);
+
         float[][] noiseMap = new float[meshGen.width + 1][];
         for (int i = 0; i < meshGen.width + 1; i++)
         {
@@ -56,33 +71,13 @@ public class FractalNoiseMap : MonoBehaviour
         {
             for (int x = 0; x <= meshGen.width; x++)
             {
+                float weightedX = (float)x / meshGen.width;
+                float weightedZ = (float)z / meshGen.depth;
                 // find point given x, z, scale, width, depth, heightMultiplier
-                noiseMap[x][z] = GenerateFractalNoise(x, z);
+                noiseMap[x][z] = noise.GetNoise(weightedX, weightedZ);
             }
         }
         meshGen.GenerateMesh(noiseMap);
-    }
-
-    private float GenerateFractalNoise(float x, float z)
-    {
-        float y = 0f; // start at zero, add procedurally
-        float frequency = scale;
-        float amplitude = 1f;
-        float maxAmplitude = 0f;
-
-        float weightedX = x / meshGen.width;
-        float weightedZ = z / meshGen.depth;
-
-        for (int i = 0; i < octaves; i++)
-        {
-            y += Mathf.PerlinNoise(weightedX * frequency, weightedZ * frequency) * amplitude;
-            maxAmplitude += amplitude;
-
-            frequency *= lacunarity;
-            amplitude *= persistence;
-        }
-
-        return y / maxAmplitude; // Normalize the result
     }
 
     void UpdateLabels()
@@ -91,6 +86,7 @@ public class FractalNoiseMap : MonoBehaviour
         PersistenceLabel.text = persistence.ToString("#.##");
         LacunarityLabel.text = lacunarity.ToString("#.##");
         ScaleLabel.text = scale.ToString("#.##");
+        SeedLabel.text = seed.ToString("#");
     }
 
     // Slider value change handlers
@@ -118,6 +114,13 @@ public class FractalNoiseMap : MonoBehaviour
     void OnScaleChanged(float value)
     {
         scale = value;
+        UpdateLabels();
+        GenMap();
+    }
+
+    void OnSeedChanged(float value)
+    {
+        seed = Mathf.RoundToInt(value);
         UpdateLabels();
         GenMap();
     }

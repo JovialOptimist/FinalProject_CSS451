@@ -4,12 +4,16 @@ using UnityEngine.SceneManagement;
 
 public class PerlinNoiseMap : MonoBehaviour
 {
-    public float scale = 5f; // Perlin Scale (kinda like "sharpness")
+    public float scale = 5f;
+    public int seed = 1000;
 
+    public UnityEngine.UI.Slider SeedSlider;
     public UnityEngine.UI.Slider ScaleSlider;
+
+    public TextMeshProUGUI SeedLabel;
     public TextMeshProUGUI ScaleLabel;
 
-    public MeshGen meshGen;
+    private MeshGen meshGen;
     public TMP_Dropdown SceneSelector;
 
     void Start()
@@ -18,8 +22,12 @@ public class PerlinNoiseMap : MonoBehaviour
         SetUpDropdown.SetUp(SceneSelector);
 
         ScaleSlider.value = scale;
+        SeedSlider.value = seed;
+
         UpdateLabels();
+
         ScaleSlider.onValueChanged.AddListener(OnScaleChanged);
+        SeedSlider.onValueChanged.AddListener(OnSeedChanged);
 
         meshGen = GetComponent<MeshGen>();
         GenMap();
@@ -27,17 +35,21 @@ public class PerlinNoiseMap : MonoBehaviour
 
     public void GenMap()
     {
-        float[][] noiseMap = new float[meshGen.width+1][];
-        for (int i = 0; i < meshGen.width+1; i++)
+        FastNoiseLite noise = new FastNoiseLite();
+        noise.SetSeed(seed);
+        noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+
+        float[][] noiseMap = new float[meshGen.width + 1][];
+        for (int i = 0; i < meshGen.width + 1; i++)
         {
-            noiseMap[i] = new float[meshGen.depth+1];
+            noiseMap[i] = new float[meshGen.depth + 1];
         }
         for (int z = 0; z <= meshGen.depth; z++)
         {
             for (int x = 0; x <= meshGen.width; x++)
             {
                 // find point given x, z, scale, width, depth, heightMultiplier
-                noiseMap[x][z] = Mathf.PerlinNoise(x * scale / meshGen.width, z * scale / meshGen.depth);
+                noiseMap[x][z] = (noise.GetNoise(x * scale, z * scale) + 1) / 2;
             }
         }
         meshGen.GenerateMesh(noiseMap);
@@ -46,11 +58,19 @@ public class PerlinNoiseMap : MonoBehaviour
     void UpdateLabels()
     {
         ScaleLabel.text = scale.ToString("#.##");
+        SeedLabel.text = seed.ToString("#");
     }
 
     void OnScaleChanged(float value)
     {
         scale = value;
+        UpdateLabels();
+        GenMap();
+    }
+
+    void OnSeedChanged(float value)
+    {
+        seed = Mathf.RoundToInt(value);
         UpdateLabels();
         GenMap();
     }
