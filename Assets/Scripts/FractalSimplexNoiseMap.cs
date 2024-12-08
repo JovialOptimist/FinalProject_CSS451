@@ -28,6 +28,9 @@ public class FractalSimplexNoiseMap : MonoBehaviour
 
     void Start()
     {
+        // Set up dropdown
+        SetUpDropdown.SetUp(SceneSelector);
+
         meshGen = GetComponent<MeshGen>();
 
         // Set initial slider values
@@ -40,23 +43,6 @@ public class FractalSimplexNoiseMap : MonoBehaviour
         PersistenceSlider.onValueChanged.AddListener(OnPersistenceChanged);
         LacunaritySlider.onValueChanged.AddListener(OnLacunarityChanged);
         ScaleSlider.onValueChanged.AddListener(OnScaleChanged);
-
-        // Set up dropdown
-        SceneSelector.options.Clear();
-        string currentSceneName = SceneManager.GetActiveScene().name;
-        int myIndex = -1;
-        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
-        {
-            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
-            string sceneName = System.IO.Path.GetFileNameWithoutExtension(scenePath);
-            if (sceneName == currentSceneName) myIndex = i;
-            SceneSelector.options.Add(new TMP_Dropdown.OptionData(sceneName));
-        }
-        SceneSelector.onValueChanged.AddListener(index =>
-        {
-            SceneManager.LoadScene(SceneSelector.options[index].text);
-        });
-        SceneSelector.SetValueWithoutNotify(myIndex);
 
         GenMap();
     }

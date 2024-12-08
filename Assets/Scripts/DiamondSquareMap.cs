@@ -25,7 +25,8 @@ public class DiamondSquareMap : MonoBehaviour
 
     void Start()
     {
-        meshGen = GetComponent<MeshGen>();
+        // Set up dropdown
+        SetUpDropdown.SetUp(SceneSelector);
 
         // Set initial slider values
         TerrainSizeSlider.value = Mathf.Log(terrainSize, 2) + 1;
@@ -36,19 +37,8 @@ public class DiamondSquareMap : MonoBehaviour
         RoughnessSlider.onValueChanged.AddListener(OnRoughnessChanged);
         SeedSlider.onValueChanged.AddListener(OnSeedChanged);
 
-        // Set up dropdown
-        SceneSelector.options.Clear();
-        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
-        {
-            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
-            string sceneName = System.IO.Path.GetFileNameWithoutExtension(scenePath);
-            SceneSelector.options.Add(new TMP_Dropdown.OptionData(sceneName));
-        }
-        SceneSelector.onValueChanged.AddListener(index =>
-        {
-            SceneManager.LoadScene(SceneSelector.options[index].text);
-        });
-
+        // Generate Map
+        meshGen = GetComponent<MeshGen>();
         GenMap();
     }
 

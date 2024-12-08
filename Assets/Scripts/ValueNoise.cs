@@ -15,17 +15,7 @@ public class ValueNoise : MonoBehaviour
         meshGen = GetComponent<MeshGen>();
 
         // Set up dropdown
-        SceneSelector.options.Clear();
-        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
-        {
-            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
-            string sceneName = System.IO.Path.GetFileNameWithoutExtension(scenePath);
-            SceneSelector.options.Add(new TMP_Dropdown.OptionData(sceneName));
-        }
-        SceneSelector.onValueChanged.AddListener(index =>
-        {
-            SceneManager.LoadScene(SceneSelector.options[index].text);
-        });
+        SetUpDropdown.SetUp(SceneSelector);
 
         GenMap();
     }
