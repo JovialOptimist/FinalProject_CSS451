@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class DLAMap : MonoBehaviour
 {
+    public int NB_Steps = 10000;
+
+    public UnityEngine.UI.Slider StepsSlider;
+    public TextMeshProUGUI StepsLabel;
+
     public MeshGen meshGen;
     public TMP_Dropdown SceneSelector;
 
@@ -14,12 +20,16 @@ public class DLAMap : MonoBehaviour
         // Set up dropdown
         SetUpDropdown.SetUp(SceneSelector);
 
+        StepsSlider.value = NB_Steps;
+        UpdateLabels();
+        StepsSlider.onValueChanged.AddListener(OnStepsChanged);
+
         GenMap();
     }
 
     public void GenMap()
     {
-        var dlaMap = GenerateMap(new Vector2Int(meshGen.width+1, meshGen.depth+1), 10000);
+        var dlaMap = GenerateMap(new Vector2Int(meshGen.width+1, meshGen.depth+1), NB_Steps);
         
         float[][] noiseMap = new float[meshGen.width+1][];
         for (int i = 0; i < meshGen.width+1; i++)
@@ -36,7 +46,6 @@ public class DLAMap : MonoBehaviour
         }
         meshGen.GenerateMesh(noiseMap);
     }
-
 
     public float[,] GenerateMap(Vector2Int size_map, int nb_steps)
     {
@@ -106,5 +115,17 @@ public class DLAMap : MonoBehaviour
 
         return grid;
     }
-    
+
+    void UpdateLabels()
+    {
+        StepsLabel.text = NB_Steps.ToString("#");
+    }
+
+    void OnStepsChanged(float value)
+    {
+        NB_Steps = (int)value;
+        UpdateLabels();
+        GenMap();
+    }
+
 }
