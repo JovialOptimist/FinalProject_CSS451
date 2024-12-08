@@ -3359,14 +3359,14 @@ MonoBehaviour:
   persistence: 0.5
   lacunarity: 3
   scale: 10
-  OctaveSlider: {fileID: 0}
-  PersistenceSlider: {fileID: 0}
-  LacunaritySlider: {fileID: 0}
-  ScaleSlider: {fileID: 0}
-  OctaveLabel: {fileID: 0}
-  PersistenceLabel: {fileID: 0}
-  LacunarityLabel: {fileID: 0}
-  ScaleLabel: {fileID: 0}
+  OctaveSlider: {fileID: 232349118}
+  PersistenceSlider: {fileID: 6497926}
+  LacunaritySlider: {fileID: 1451917816}
+  ScaleSlider: {fileID: 1623833754}
+  OctaveLabel: {fileID: 1696497288}
+  PersistenceLabel: {fileID: 820806265}
+  LacunarityLabel: {fileID: 572094334}
+  ScaleLabel: {fileID: 1767643849}
   SceneSelector: {fileID: 265864009}
 --- !u!1 &1263303868
 GameObject:

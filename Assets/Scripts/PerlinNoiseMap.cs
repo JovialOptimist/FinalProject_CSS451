@@ -5,6 +5,10 @@ using UnityEngine.SceneManagement;
 public class PerlinNoiseMap : MonoBehaviour
 {
     public float scale = 5f; // Perlin Scale (kinda like "sharpness")
+
+    public UnityEngine.UI.Slider ScaleSlider;
+    public TextMeshProUGUI ScaleLabel;
+
     public MeshGen meshGen;
     public TMP_Dropdown SceneSelector;
 
@@ -12,6 +16,10 @@ public class PerlinNoiseMap : MonoBehaviour
     {
         // Set up dropdown
         SetUpDropdown.SetUp(SceneSelector);
+
+        ScaleSlider.value = scale;
+        UpdateLabels();
+        ScaleSlider.onValueChanged.AddListener(OnScaleChanged);
 
         meshGen = GetComponent<MeshGen>();
         GenMap();
@@ -33,6 +41,18 @@ public class PerlinNoiseMap : MonoBehaviour
             }
         }
         meshGen.GenerateMesh(noiseMap);
+    }
+
+    void UpdateLabels()
+    {
+        ScaleLabel.text = scale.ToString("#.##");
+    }
+
+    void OnScaleChanged(float value)
+    {
+        scale = value;
+        UpdateLabels();
+        GenMap();
     }
 
 }
