@@ -2486,7 +2486,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 100
   depth: 100
-  heightMultiplier: 5
+  heightMultiplier: 10
   colorCutoff: 0.7
   colorMat: {fileID: 2100000, guid: 1e145779c1853474799c4204d3dfe6c1, type: 2}
 --- !u!114 &1412686525
